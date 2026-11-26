@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-type="place">
+<head>
+  <!-- ============================================================
+       1. CABEÇALHO
+       Informações conferidas: Instagram e Linktree oficiais, site oficial,
+       Restaurant Guru e Wanderlog (horários e nota). Cardápio: foto do
+       cardápio impresso enviada pelo cliente.
+       ============================================================ -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vitório · Culinária internacional em Araraquara/SP</title>
+  <meta name="description" content="Restaurante Vitório: culinária internacional, massas artesanais, peixes e carnes. Chef Gustavo Oliveira. Av. Dom Pedro II, 1432, Jardim do Carmo, Araraquara/SP. Reservas pelo WhatsApp.">
+  <meta name="page-type" content="place">
+  <meta name="site-kind" content="other">
+  <meta name="page-kind" content="place">
+  <meta name="theme-color" content="#0a0a0a">
+  <meta property="og:title" content="Restaurante Vitório · Araraquara">
+  <meta property="og:description" content="Culinária internacional · Massas artesanais, peixes e carnes · Chef Gustavo Oliveira.">
+  <!-- Prévia do link no WhatsApp/Instagram/Facebook (1200x630).
+       Depois de publicado, troque pelo endereço completo: https://.../compartilhar.jpg -->
+  <meta property="og:image" content="compartilhar.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:type" content="restaurant">
+  <meta property="og:locale" content="pt_BR">
+  <meta name="twitter:card" content="summary_large_image">
+  <!-- Ícone do site (favicon) -->
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+  <link rel="icon" type="image/png" sizes="48x48" href="favicon-48.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icone-192.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+
+  <!-- Fontes: Oswald (rótulos, a linguagem da faixa do logo), Cormorant Garamond
+       (títulos e nomes de pratos, clássica), Barlow (texto corrido) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Oswald:wght@300;400&display=swap" rel="stylesheet">
+  <link rel="preload" href="fotos/prato-polvo.jpg" as="image">
+  <!-- Estilo do mapa (Leaflet, versão fixa) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+  <!-- Dados estruturados (Schema.org) para o Google -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Restaurant",
+    "name": "Restaurante Vitório",
+    "description": "Culinária internacional: massas artesanais, peixes e carnes. Chef Gustavo Oliveira.",
+    "image": ["fotos/prato-polvo.jpg", "fotos/prato-norma.jpg", "fotos/chef-gustavo.jpg"],
+    "logo": "icone-512.png",
+    "servesCuisine": ["Internacional", "Massas artesanais", "Peixes", "Carnes"],
+    "priceRange": "$$$",
+    "telephone": "+55-16-3322-2739",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Av. Dom Pedro II, 1432 - Jardim do Carmo",
+      "addressLocality": "Araraquara",
+      "addressRegion": "SP",
+      "postalCode": "14801-040",
+      "addressCountry": "BR"
+    },
+    "openingHoursSpecification": [
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": "Sunday", "opens": "12:00", "closes": "15:00" },
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Tuesday", "Wednesday", "Thursday", "Friday"], "opens": "18:45", "closes": "22:15" },
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": "Saturday", "opens": "12:00", "closes": "14:15" },
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": "Saturday", "opens": "18:45", "closes": "22:15" }
+    ],
+    "menu": "#cardapio",
+    "acceptsReservations": "https://wa.me/5516981937333",
+    "sameAs": [
+      "https://www.instagram.com/restaurantevitorio/",
+      "https://www.facebook.com/vitorioararaquara/",
+      "https://linktr.ee/restaurante.vitorio"
+    ]
+  }
+  </script>
+
+  <script>
+    document.documentElement.classList.add("js");
+    window.planoB = setTimeout(() => document.documentElement.classList.remove("js"), 3000);
+  </script>
+
+  <style>
+    /* ============================================================
+       2. VARIÁVEIS
+       Quase só preto e branco: a cor vem das fotos dos pratos.
+       O vermelho do logo só aparece no botão de reserva e em detalhes.
+       ============================================================ */
+    :root {
+      --preto: #0a0a0a;
+      --carvao: #121212;
+      --branco: #f4f3f1;
+      --cinza: #9c9a97;
+      --linha: rgba(255,255,255,0.1);
+      --vermelho: #ff2a00;
+      --vermelho-btn: #e02400;
+
+      --f-rotulo: "Oswald", "Arial Narrow", sans-serif;
+      --f-prato: "Cormorant Garamond", Georgia, serif;
+      --f-texto: "Barlow", system-ui, sans-serif;
+
+      --menu-h: 64px;
+      --borda: clamp(20px, 6vw, 88px);
+      --max: 1240px;
+      --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    /* ============================================================
+       3. BASE
+       ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: var(--menu-h); }
+    body { margin: 0; background: var(--preto); color: var(--branco); font-family: var(--f-texto); font-weight: 300; font-size: 1rem; line-height: 1.7; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+    img { display: block; max-width: 100%; height: auto; }
+    a { color: inherit; }
+    h1, h2, h3, p { margin: 0; }
+    .pular { position: absolute; left: 12px; top: -60px; z-index: 100; padding: 10px 16px; background: var(--branco); color: var(--preto); }
+    .pular:focus { top: 12px; }
+    :focus-visible { outline: 1px solid var(--vermelho); outline-offset: 4px; }
+    .wrap { width: 100%; max-width: calc(var(--max) + var(--borda) * 2); margin: 0 auto; padding: 0 var(--borda); }
+
+    .rotulo { display: block; margin-bottom: 20px; font-family: var(--f-rotulo); font-weight: 400; font-size: 0.72rem; letter-spacing: 0.34em; text-transform: uppercase; color: var(--cinza); }
+    .titulo { font-family: var(--f-rotulo); font-weight: 300; text-transform: uppercase; font-size: clamp(2.2rem, 7vw, 4.4rem); line-height: 1; letter-spacing: 0.02em; }
+    .titulo em { font-family: var(--f-prato); font-style: italic; font-weight: 400; text-transform: none; }
+
+    /* ---------- BOTÕES ---------- */
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 50px; padding: 0 28px; white-space: nowrap; font-family: var(--f-rotulo); font-size: 0.8rem; font-weight: 400; letter-spacing: 0.24em; text-transform: uppercase; text-decoration: none; border: 1px solid transparent; cursor: pointer; transition: transform 160ms var(--ease-out), background-color 200ms, border-color 200ms; }
+    .btn-cheio { background: var(--vermelho-btn); color: #fff; }
+    .btn-contorno { border-color: rgba(255,255,255,0.35); color: var(--branco); }
+    .btn:active { transform: scale(0.97); }
+    @media (hover: hover) { .btn-cheio:hover { background: var(--vermelho); } .btn-contorno:hover { border-color: var(--branco); } }
+    .link-risco { text-decoration: none; background: linear-gradient(currentColor, currentColor) left bottom / 0 1px no-repeat; transition: background-size 300ms var(--ease-out); }
+    @media (hover: hover) { .link-risco:hover { background-size: 100% 1px; } }
+
+    /* ---------- FOTO (moldura retangular, zoom lento no hover) ----------
+       Mesmo tratamento em todas: um pouco mais de contraste e cor + vinheta. */
+    .foto { position: relative; overflow: hidden; background: #161616; margin: 0; }
+    .foto img, .prato img { filter: contrast(1.06) saturate(1.08) brightness(1.02); }
+    .foto img { width: 100%; height: 100%; object-fit: cover; transition: transform 900ms var(--ease-out); }
+    .foto::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at center, rgba(0,0,0,0) 55%, rgba(0,0,0,0.3) 100%); }
+    @media (hover: hover) { .foto:hover img { transform: scale(1.03); } }
+
+    /* ---------- PRATO (foto tirada de cima, recortada em círculo) ----------
+       O círculo tem sombra de verdade embaixo, como um prato na mesa.
+       A rotação é feita pelo JavaScript (fica mais rápida quando a página rola). */
+    .prato { position: relative; aspect-ratio: 1; border-radius: 50%; overflow: hidden; background: #161616; box-shadow: 0 30px 60px -10px rgba(0,0,0,0.75), 0 8px 18px rgba(0,0,0,0.5); }
+    .prato img { width: 100%; height: 100%; object-fit: cover; will-change: transform; }
+
+    /* ============================================================
+       4. MENU DO TOPO
+       ============================================================ */
+    .menu { position: fixed; inset: 0 0 auto 0; z-index: 50; height: var(--menu-h); transition: background-color 300ms, border-color 300ms; border-bottom: 1px solid transparent; }
+    .menu.solido { background: rgba(10,10,10,0.88); backdrop-filter: blur(12px); border-color: var(--linha); }
+    .menu .wrap { height: 100%; display: flex; align-items: center; justify-content: space-between; }
+    .menu-logo img { height: 42px; width: auto; }
+    .menu-links { display: none; }
+    .menu-botao { width: 48px; height: 48px; display: grid; place-items: center; background: none; border: 0; color: var(--branco); cursor: pointer; margin-right: -12px; }
+    .menu-botao span, .menu-botao span::before, .menu-botao span::after { display: block; width: 24px; height: 1px; background: currentColor; position: relative; transition: transform 220ms var(--ease-out), background-color 220ms; }
+    .menu-botao span::before, .menu-botao span::after { content: ""; position: absolute; left: 0; }
+    .menu-botao span::before { top: -7px; }
+    .menu-botao span::after { top: 7px; }
+    .menu-botao[aria-expanded="true"] span { background: transparent; }
+    .menu-botao[aria-expanded="true"] span::before { transform: translateY(7px) rotate(45deg); }
+    .menu-botao[aria-expanded="true"] span::after { transform: translateY(-7px) rotate(-45deg); }
+    .menu-painel { position: fixed; inset: var(--menu-h) 0 0 0; z-index: 49; background: var(--preto); padding: 32px var(--borda); display: none; flex-direction: column; }
+    .menu-painel.aberto { display: flex; }
+    .menu-painel a:not(.btn) { font-family: var(--f-rotulo); font-weight: 300; font-size: 2.2rem; text-transform: uppercase; text-decoration: none; padding: 10px 0; border-bottom: 1px solid var(--linha); }
+    .menu-painel .btn { margin-top: 32px; }
+    @media (min-width: 960px) {
+      .menu-botao, .menu-painel { display: none !important; }
+      .menu-links { display: flex; align-items: center; gap: 34px; }
+      .menu-links a:not(.btn) { font-family: var(--f-rotulo); font-size: 0.78rem; letter-spacing: 0.24em; text-transform: uppercase; padding: 6px 0; }
+      .menu-links .btn { min-height: 42px; padding: 0 22px; }
+    }
+
+    /* ============================================================
+       5. CAPA
+       Inspirada no vídeo de referência: um prato grande, visto de cima,
+       girando devagar ao lado do texto.
+       Celular: o prato fica em cima, maior que a tela (cortado nas laterais),
+       e o texto vem embaixo. Computador: texto à esquerda, prato à direita
+       saindo pela borda da tela.
+       ============================================================ */
+    .capa { position: relative; min-height: 100svh; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; padding-top: var(--menu-h); }
+    .capa-prato-area { position: relative; height: min(104vw, 50svh); display: flex; justify-content: center; align-items: center; }
+    .capa-prato { width: min(110vw, 60svh); flex: none; }
+    .capa-texto { position: relative; padding: 8px var(--borda) 40px; }
+    .capa-logo { width: min(48vw, 230px); }
+    .capa-titulo { margin-top: 20px; font-family: var(--f-prato); font-style: italic; font-weight: 400; font-size: clamp(2.5rem, 11vw, 5.6rem); line-height: 1; letter-spacing: -0.01em; }
+    .capa-titulo .linha { display: block; overflow: hidden; padding-bottom: 0.1em; }
+    .capa-titulo .linha > span { display: inline-block; white-space: nowrap; }
+    .js .capa-titulo .linha > span { transform: translateY(110%); }
+    .capa h1 { margin-top: 16px; font-family: var(--f-rotulo); font-weight: 300; text-transform: uppercase; letter-spacing: 0.16em; font-size: clamp(0.85rem, 3.4vw, 1.05rem); line-height: 1.5; }
+    .capa-sub { margin-top: 2px; font-family: var(--f-prato); font-style: italic; font-size: 1.1rem; color: #cfcdc9; }
+    .capa-acoes { margin-top: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-width: 460px; }
+    .capa-acoes .btn { padding: 0 12px; }
+    .js .entra, .js .capa-prato { opacity: 0; }
+
+    @media (min-width: 960px) {
+      .capa { flex-direction: row; align-items: center; justify-content: flex-start; padding-top: 0; }
+      .capa-texto { width: 50%; padding: calc(var(--menu-h) + 40px) 48px 64px max(var(--borda), calc((100vw - var(--max)) / 2)); z-index: 1; }
+      .capa-prato-area { position: absolute; top: 0; bottom: 0; right: 0; width: 55%; height: auto; justify-content: flex-start; }
+      .capa-prato { width: min(58vw, 96vh); margin-left: 4vw; }   /* sai um pouco pela borda direita */
+      .capa-logo { width: min(24vw, 320px); }
+      .capa-titulo { margin-top: 32px; font-size: clamp(2.6rem, 5vw, 5.4rem); }
+      .capa h1 { margin-top: 28px; }
+      .capa-acoes { margin-top: 36px; max-width: 440px; }
+    }
+
+    /* ============================================================
+       6. SEÇÕES
+       ============================================================ */
+    .secao { padding: 96px 0; }
+    @media (min-width: 960px) { .secao { padding: 140px 0; } }
+    .alt { background: var(--carvao); }
+
+    /* ---------- FAIXA DE AVALIAÇÕES (passa devagar; para quando o mouse passa) ---------- */
+    .faixa-notas { overflow: hidden; border-top: 1px solid var(--linha); border-bottom: 1px solid var(--linha); padding: 16px 0; }
+    .faixa-trilho { display: flex; width: max-content; animation: faixa 48s linear infinite; }
+    .faixa-trilho span { display: inline-flex; align-items: baseline; gap: 10px; padding: 0 28px; white-space: nowrap; font-family: var(--f-rotulo); font-weight: 300; font-size: 0.78rem; letter-spacing: 0.24em; text-transform: uppercase; color: var(--branco); }
+    .faixa-trilho span::after { content: "·"; margin-left: 28px; color: var(--cinza); }
+    .faixa-trilho i { font-style: normal; color: var(--vermelho); letter-spacing: 0.12em; }
+    .faixa-trilho em { font-style: normal; color: var(--cinza); }
+    @keyframes faixa { to { transform: translateX(-50%); } }
+    @media (hover: hover) { .faixa-notas:hover .faixa-trilho { animation-play-state: paused; } }
+    @media (prefers-reduced-motion: reduce) { .faixa-trilho { animation: none; flex-wrap: wrap; width: auto; justify-content: center; row-gap: 10px; } .faixa-trilho span:nth-child(n+6) { display: none; } }
+
+    /* Faixa 2 (avaliações): letra clássica em itálico, maior, mais lenta e no sentido contrário */
+    .faixa-depoimentos { padding: 26px 0; background: var(--preto); }
+    .faixa-depoimentos .faixa-trilho { animation-duration: 90s; animation-direction: reverse; }
+    .faixa-depoimentos .faixa-trilho span { gap: 14px; padding: 0 40px; font-family: var(--f-prato); font-style: italic; font-weight: 400; font-size: clamp(1.15rem, 3.6vw, 1.5rem); letter-spacing: 0; text-transform: none; }
+    .faixa-depoimentos .faixa-trilho span::after { content: "★★★★★"; margin-left: 40px; font-family: var(--f-rotulo); font-style: normal; font-size: 0.7rem; letter-spacing: 0.12em; color: var(--vermelho); }
+    .faixa-depoimentos q { quotes: "“" "”"; }
+    .faixa-depoimentos em { font-family: var(--f-rotulo); font-style: normal; font-size: 0.7rem; letter-spacing: 0.24em; text-transform: uppercase; color: var(--cinza); }
+    @media (prefers-reduced-motion: reduce) { .faixa-depoimentos .faixa-trilho span { white-space: normal; text-align: center; padding: 8px var(--borda); } .faixa-depoimentos .faixa-trilho span::after { display: none; } .faixa-depoimentos .faixa-trilho span:nth-child(n+5) { display: none; } }
+
+    /* ---------- O CHEF ---------- */
+    .chef-grade { display: grid; gap: 40px; }
+    /* foto principal à esquerda + segunda foto menor sobreposta no canto de baixo */
+    .chef-fotos { position: relative; padding-bottom: 22%; }
+    .chef-foto { aspect-ratio: 4 / 5; width: 80%; }
+    .chef-foto img { object-position: 50% 30%; }
+    .chef-foto-2 { position: absolute; right: 0; bottom: 0; width: 48%; aspect-ratio: 4 / 5; outline: 8px solid var(--preto); }
+    .chef-foto-2 img { object-position: 50% 25%; }
+    .chef-nome { font-family: var(--f-prato); font-weight: 400; font-size: clamp(2.8rem, 10vw, 5.2rem); line-height: 1; }
+    .chef-nome em { font-style: italic; }
+    .chef-texto p { margin-top: 22px; max-width: 48ch; color: #d6d3cf; }
+    .chef-texto p:first-of-type { margin-top: 32px; font-family: var(--f-prato); font-size: clamp(1.35rem, 4vw, 1.7rem); line-height: 1.35; color: var(--branco); }
+    .chef-dados { margin: 40px 0 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(3, auto); justify-content: start; gap: 0; border-top: 1px solid var(--linha); }
+    .chef-dados li { padding: 18px 28px 0 0; }
+    .chef-dados li + li { padding-left: 24px; border-left: 1px solid var(--linha); }
+    .chef-dados strong { display: block; font-family: var(--f-rotulo); font-weight: 300; font-size: 1.05rem; letter-spacing: 0.08em; text-transform: uppercase; }
+    .chef-dados span { font-size: 0.82rem; color: var(--cinza); }
+    @media (max-width: 420px) { .chef-dados { grid-template-columns: 1fr 1fr; } .chef-dados li:nth-child(3) { grid-column: 1 / -1; border-left: 0; padding-left: 0; } }
+    @media (min-width: 960px) { .chef-grade { grid-template-columns: 5fr 6fr; gap: 104px; align-items: center; } }
+
+    /* ---------- PRATOS DA CASA (pratos girando) ---------- */
+    .pratos-topo { text-align: center; max-width: 640px; margin: 0 auto; }
+    .pratos-topo p { margin-top: 18px; color: var(--cinza); }
+    .pratos-lista { margin: 72px 0 0; padding: 0; list-style: none; display: grid; gap: 72px; }
+    .prato-item { text-align: center; }
+    .prato-item .prato { width: min(78vw, 360px); margin: 0 auto; }
+    .prato-cat { display: block; margin-top: 36px; font-family: var(--f-rotulo); font-size: 0.72rem; letter-spacing: 0.34em; text-transform: uppercase; color: var(--cinza); }
+    .prato-item h3 { margin-top: 10px; font-family: var(--f-prato); font-weight: 400; font-size: clamp(1.7rem, 5vw, 2.1rem); line-height: 1.15; }
+    .prato-item p { margin: 10px auto 0; max-width: 30ch; color: #cfcdc9; font-size: 0.95rem; }
+    .prato-preco { display: block; margin-top: 14px; font-family: var(--f-rotulo); font-weight: 300; letter-spacing: 0.1em; }
+    @media (min-width: 640px) {
+      .pratos-lista { grid-template-columns: 1fr 1fr; gap: 64px 40px; }
+      .prato-item .prato { width: min(38vw, 320px); }
+    }
+    @media (min-width: 1100px) {
+      .pratos-lista { grid-template-columns: repeat(4, 1fr); gap: 40px; }
+      .prato-item:nth-child(even) { margin-top: 96px; }   /* pratos alternados mais baixos: composição de revista */
+      .prato-item .prato { width: min(20vw, 290px); }
+    }
+
+    /* ---------- A CASA: título + texto, e 4 fotos do lugar ----------
+       Celular: foto principal grande, duas lado a lado, fachada larga embaixo.
+       Computador: as quatro fotos em linha, alternando a altura (2ª e 4ª mais baixas). */
+    .casa-topo { display: grid; gap: 28px; }
+    .casa-titulo { font-family: var(--f-prato); font-weight: 400; font-size: clamp(2.4rem, 8vw, 4.4rem); line-height: 1.05; max-width: 14ch; }
+    .casa-titulo em { font-style: italic; }
+    .casa-texto p { color: #d6d3cf; max-width: 46ch; }
+    .casa-texto p + p { margin-top: 18px; }
+    .casa-texto .btn { margin-top: 32px; }
+    @media (min-width: 960px) { .casa-topo { grid-template-columns: 1.1fr 1fr; gap: 80px; align-items: end; } }
+    #casa { padding-bottom: 0; }
+
+    /* Galeria grande que passa de lado ao rolar:
+       .casa-galeria fica alta (o JS calcula), .casa-pin "gruda" na tela
+       e o trilho de fotos anda para a esquerda conforme a rolagem. */
+    .casa-galeria { position: relative; margin-top: 56px; }
+    .casa-pin { position: sticky; top: 0; height: 100svh; overflow: hidden; display: flex; align-items: center; }
+    .casa-trilho { display: flex; gap: 14px; padding: var(--menu-h) var(--borda) 0; will-change: transform; }
+    .casa-trilho .foto { flex: none; height: min(74svh, 128vw, 860px); aspect-ratio: 3 / 4; }
+    .casa-contador { position: absolute; left: var(--borda); bottom: 22px; font-family: var(--f-rotulo); font-size: 0.75rem; letter-spacing: 0.3em; color: var(--cinza); }
+    .casa-contador b { color: var(--branco); font-weight: 400; }
+    @media (min-width: 960px) { .casa-trilho { gap: 24px; } .casa-trilho .foto { height: min(80svh, 860px); } }
+    /* Sem JavaScript ou com "menos movimento": rolagem de lado normal, com encaixe */
+    .casa-galeria.livre .casa-pin { position: static; height: auto; overflow-x: auto; scroll-snap-type: x mandatory; padding: 24px 0 56px; }
+    .casa-galeria.livre .casa-trilho .foto { scroll-snap-align: center; }
+    .casa-galeria.livre .casa-contador { display: none; }
+
+
+    /* ---------- CARDÁPIO ---------- */
+    .cardapio-topo { display: grid; gap: 16px; align-items: end; }
+    .cardapio-topo p { color: var(--cinza); max-width: 40ch; }
+    @media (min-width: 960px) { .cardapio-topo { grid-template-columns: 1fr auto; } .cardapio-topo p { text-align: right; } }
+    .abas { position: relative; margin: 44px calc(var(--borda) * -1) 0; padding: 0 var(--borda); display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; border-bottom: 1px solid var(--linha); }
+    .abas::-webkit-scrollbar { display: none; }
+    @media (min-width: 960px) { .abas { margin-left: 0; margin-right: 0; padding: 0; } }
+    .aba { flex: none; min-height: 50px; padding: 0 16px; background: none; border: 0; cursor: pointer; font-family: var(--f-rotulo); font-size: 0.82rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--cinza); transition: color 200ms; }
+    .aba:first-of-type { padding-left: 0; }
+    .aba[aria-selected="true"] { color: var(--branco); }
+    @media (hover: hover) { .aba:hover { color: var(--branco); } }
+    .abas-indicador { position: absolute; left: 0; bottom: -1px; height: 1px; width: 0; background: var(--branco); pointer-events: none; }
+    .painel[hidden] { display: none; }
+    .itens { list-style: none; margin: 0; padding: 0; display: grid; column-gap: 96px; }
+    @media (min-width: 960px) { .itens { grid-template-columns: 1fr 1fr; } }
+    .item { padding: 22px 0; border-bottom: 1px solid var(--linha); }
+    .item-topo { display: flex; align-items: baseline; justify-content: space-between; gap: 24px; }
+    .item h3 { font-family: var(--f-prato); font-weight: 500; font-size: 1.3rem; line-height: 1.25; }
+    .item h3 small { font-family: var(--f-texto); font-weight: 300; font-size: 0.8rem; color: var(--cinza); margin-left: 4px; }
+    .preco { font-family: var(--f-rotulo); font-weight: 300; font-size: 1rem; letter-spacing: 0.06em; white-space: nowrap; }
+    .item p { margin-top: 4px; font-size: 0.92rem; color: var(--cinza); max-width: 44ch; }
+    .painel-titulo { margin: 40px 0 0; font-family: var(--f-rotulo); font-weight: 400; font-size: 0.75rem; letter-spacing: 0.32em; text-transform: uppercase; color: var(--cinza); }
+    .painel-titulo:first-child { margin-top: 28px; }
+    .painel-nota { margin-top: 20px; font-size: 0.88rem; color: var(--cinza); }
+    .cardapio-rodape { margin-top: 40px; display: flex; flex-wrap: wrap; gap: 8px 32px; font-size: 0.85rem; color: var(--cinza); }
+
+    /* ---------- GALERIA: 1 foto grande + 8 menores ---------- */
+    .galeria { margin-top: 48px; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .galeria .foto { aspect-ratio: 1; }
+    .galeria .foto.grande { grid-column: span 2; }
+    @media (min-width: 960px) {
+      .galeria { grid-template-columns: repeat(4, 1fr); gap: 12px; }
+      .galeria .foto.grande { grid-row: span 2; }
+    }
+    .galeria-nota { margin-top: 24px; font-size: 0.9rem; color: var(--cinza); }
+
+    /* ---------- CONTATO ---------- */
+    .endereco-grande { font-family: var(--f-rotulo); font-weight: 300; text-transform: uppercase; font-size: clamp(2.4rem, 10vw, 7rem); line-height: 0.98; }
+    .endereco-grande .palavra { display: inline-block; }
+    .js .endereco-grande .palavra { color: #2c2c2c; }
+    .endereco-bairro { margin-top: 16px; color: var(--cinza); }
+    .contato-grade { margin-top: 64px; display: grid; gap: 56px; }
+    @media (min-width: 1024px) { .contato-grade { grid-template-columns: 1fr 1fr; gap: 96px; } }
+    .subtitulo { font-family: var(--f-rotulo); font-weight: 400; font-size: 0.72rem; letter-spacing: 0.34em; text-transform: uppercase; color: var(--cinza); margin-bottom: 8px; }
+    .horarios { width: 100%; border-collapse: collapse; }
+    .horarios th, .horarios td { padding: 13px 0; border-bottom: 1px solid var(--linha); font-weight: 300; text-align: left; }
+    .horarios th { font-family: var(--f-rotulo); font-weight: 300; letter-spacing: 0.12em; text-transform: uppercase; font-size: 0.9rem; }
+    .horarios td { text-align: right; color: #cfcdc9; font-size: 0.95rem; }
+    .horarios tr.hoje th, .horarios tr.hoje td { color: var(--branco); }
+    .horarios tr.hoje th::after { content: "Hoje"; margin-left: 10px; padding: 1px 7px; border: 1px solid var(--vermelho); color: var(--vermelho); font-size: 0.6rem; letter-spacing: 0.2em; vertical-align: 2px; }
+    .fechado { color: #555 !important; }
+    .nota-pequena { margin-top: 14px; font-size: 0.85rem; color: var(--cinza); }
+    .contatos { margin: 0; }
+    .contatos > div { padding: 14px 0; border-bottom: 1px solid var(--linha); display: flex; justify-content: space-between; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+    .contatos dt { font-family: var(--f-rotulo); font-size: 0.72rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--cinza); }
+    .contatos dd { margin: 0; }
+    .contatos dd a { text-decoration: none; }
+    .contato-acoes { display: grid; gap: 10px; margin-top: 28px; }
+    @media (min-width: 560px) { .contato-acoes { grid-template-columns: 1fr 1fr; } .contato-acoes .btn:first-child { grid-column: 1 / -1; } }
+
+    /* Mapa: só para ver; clicar abre o Google Maps */
+    .mapa { position: relative; display: block; margin-top: 64px; height: 340px; overflow: hidden; border: 1px solid var(--linha); text-decoration: none; }
+    .mapa-tela { position: absolute; inset: 0; background: #0e0e0e; pointer-events: none; }
+    .mapa .leaflet-tile-pane { filter: grayscale(1) invert(1) contrast(0.9) brightness(0.85); }
+    .mapa .leaflet-container { background: #0e0e0e; font-family: var(--f-texto); }
+    .mapa .leaflet-control-attribution { background: rgba(10,10,10,0.75); color: #6b6b6b; font-size: 10px; padding: 2px 6px; }
+    .pino { position: relative; }
+    .pino-ponto { position: absolute; inset: 3px; border-radius: 50%; background: var(--vermelho); box-shadow: 0 0 0 3px rgba(10,10,10,0.9); }
+    .pino-onda { position: absolute; inset: -10px; border-radius: 50%; border: 1px solid var(--vermelho); animation: onda 2.4s var(--ease-out) infinite; }
+    .pino-nome { position: absolute; left: 26px; top: 50%; transform: translateY(-50%); white-space: nowrap; font-family: var(--f-rotulo); font-size: 0.75rem; letter-spacing: 0.24em; text-transform: uppercase; color: var(--branco); text-shadow: 0 1px 6px #000; }
+    @keyframes onda { from { transform: scale(0.4); opacity: 0.9; } to { transform: scale(1.6); opacity: 0; } }
+    .mapa-botao { position: absolute; z-index: 1000; left: 16px; bottom: 16px; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 18px; background: var(--preto); border: 1px solid rgba(255,255,255,0.35); font-family: var(--f-rotulo); font-size: 0.75rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--branco); transition: border-color 200ms, transform 160ms var(--ease-out); }
+    @media (hover: hover) { .mapa:hover .mapa-botao { border-color: var(--branco); } }
+    .mapa:active .mapa-botao { transform: scale(0.97); }
+
+    /* ============================================================
+       7. RODAPÉ
+       ============================================================ */
+    .rodape { padding: 64px 0 32px; border-top: 1px solid var(--linha); }
+    .rodape-topo { display: flex; flex-wrap: wrap; gap: 28px; align-items: center; justify-content: space-between; }
+    .rodape-topo img { height: 56px; width: auto; }
+    .rodape-links { display: flex; flex-wrap: wrap; gap: 4px 28px; }
+    .rodape-links a { font-family: var(--f-rotulo); font-size: 0.78rem; letter-spacing: 0.22em; text-transform: uppercase; padding: 12px 0; }
+    .rodape-base { margin-top: 32px; padding-top: 20px; border-top: 1px solid var(--linha); display: flex; flex-wrap: wrap; gap: 16px; align-items: center; justify-content: space-between; font-size: 0.85rem; color: var(--cinza); }
+    .feito-por { display: inline-flex; align-items: center; gap: 12px; }
+    .feito-por img { height: 46px; width: auto; }
+
+    /* ============================================================
+       8. BARRA FIXA DO CELULAR (aparece depois da capa)
+       ============================================================ */
+    .barra-celular { position: fixed; inset: auto 0 0 0; z-index: 40; display: grid; grid-template-columns: 1.4fr 1fr; gap: 8px; padding: 10px var(--borda) calc(10px + env(safe-area-inset-bottom)); background: rgba(10,10,10,0.92); backdrop-filter: blur(12px); border-top: 1px solid var(--linha); transform: translateY(110%); transition: transform 350ms var(--ease-out); }
+    .barra-celular.visivel { transform: none; }
+    .barra-celular .btn { min-height: 48px; padding: 0 10px; letter-spacing: 0.18em; }
+    body { padding-bottom: 72px; }
+    @media (min-width: 960px) { .barra-celular { display: none; } body { padding-bottom: 0; } }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .js .entra, .js .capa-prato { opacity: 1; }
+      .js .capa-titulo .linha > span { transform: none; }
+      .js .endereco-grande .palavra { color: var(--branco); }
+      .pino-onda { animation: none; opacity: 0.5; }
+      *, *::before, *::after { transition-duration: 0.01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+
+  <!-- ============================================================
+       MENU
+       ============================================================ -->
+  <header class="menu">
+    <div class="wrap">
+      <a href="#inicio" class="menu-logo"><img src="logo-vitorio.png" alt="Vitório — voltar ao início" width="625" height="265"></a>
+      <nav class="menu-links" aria-label="Principal">
+        <a href="#chef" class="link-risco">O chef</a>
+        <a href="#pratos" class="link-risco">Pratos</a>
+        <a href="#casa" class="link-risco">A casa</a>
+        <a href="#cardapio" class="link-risco">Cardápio</a>
+        <a href="#fotos" class="link-risco">Fotos</a>
+        <a href="#contato" class="link-risco">Horários</a>
+        <a href="https://wa.me/5516981937333?text=Ol%C3%A1!%20Gostaria%20de%20reservar%20uma%20mesa%20no%20Vit%C3%B3rio.%20Poderiam%20me%20informar%20a%20disponibilidade?" class="btn btn-cheio" target="_blank" rel="noopener">Reservar mesa</a>
+      </nav>
+      <button class="menu-botao" aria-label="Abrir menu" aria-expanded="false" aria-controls="menu-painel"><span></span></button>
+    </div>
+  </header>
+
+  <nav class="menu-painel" id="menu-painel" aria-label="Menu do celular">
+    <a href="#chef">O chef</a>
+    <a href="#pratos">Pratos</a>
+    <a href="#casa">A casa</a>
+    <a href="#cardapio">Cardápio</a>
+    <a href="#fotos">Fotos</a>
+    <a href="#contato">Horários e contato</a>
+    <a href="https://wa.me/5516981937333?text=Ol%C3%A1!%20Gostaria%20de%20reservar%20uma%20mesa%20no%20Vit%C3%B3rio.%20Poderiam%20me%20informar%20a%20disponibilidade?" class="btn btn-cheio" target="_blank" rel="noopener">Reservar mesa</a>
+  </nav>
+
+  <main id="conteudo">
+
+    <!-- ==========================================================
+         1. CAPA — prato visto de cima girando devagar
+         ========================================================== -->
+    <section class="capa" id="inicio">
+      <div class="capa-prato-area">
+        <div class="prato capa-prato" data-giro="1" data-velocidade="5">
+          <img src="fotos/prato-polvo.jpg" alt="Polvo grelhado com batatas, brócolis, tomatinhos e azeitonas, visto de cima" width="1080" height="1080" fetchpriority="high">
+        </div>
+      </div>
+      <div class="capa-texto">
+        <img class="capa-logo entra" src="logo-vitorio.png" alt="Vitório Bar & Restaurante" width="625" height="265">
+        <p class="capa-titulo">
+          <span class="linha"><span>Feito à mão.</span></span>
+          <span class="linha"><span>Servido no ponto.</span></span>
+        </p>
+        <h1 class="entra">Culinária internacional em Araraquara</h1>
+        <p class="capa-sub entra">Massas artesanais, peixes e carnes</p>
+        <div class="capa-acoes">
+          <a href="https://wa.me/5516981937333?text=Ol%C3%A1!%20Gostaria%20de%20reservar%20uma%20mesa%20no%20Vit%C3%B3rio.%20Poderiam%20me%20informar%20a%20disponibilidade?" class="btn btn-cheio entra" target="_blank" rel="noopener">Reservar mesa</a>
+          <a href="#cardapio" class="btn btn-contorno entra">Cardápio</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Faixa de avaliações passando devagar (números conferidos em 2 fontes:
+         Restaurant Guru e Wanderlog para o Google; Restaurant Guru e busca para o Tripadvisor).
+         O conteúdo aparece duas vezes para a faixa "dar a volta" sem emenda. -->
+    <div class="faixa-notas" aria-label="Avaliações: 4,8 no Google com mais de 1.200 avaliações; 4,7 no Tripadvisor com 609 avaliações">
+      <div class="faixa-trilho" aria-hidden="true">
+        <span><i>★★★★★</i> 4,8 no Google <em>mais de 1.200 avaliações</em></span>
+        <span><i>★</i> 4,7 no Tripadvisor <em>609 avaliações</em></span>
+        <span>25 anos em Araraquara</span>
+        <span>Chef Gustavo Oliveira</span>
+        <span>Massas artesanais, peixes e carnes</span>
+        <span><i>★★★★★</i> 4,8 no Google <em>mais de 1.200 avaliações</em></span>
+        <span><i>★</i> 4,7 no Tripadvisor <em>609 avaliações</em></span>
+        <span>25 anos em Araraquara</span>
+        <span>Chef Gustavo Oliveira</span>
+        <span>Massas artesanais, peixes e carnes</span>
+      </div>
+    </div>
+
+    <!-- ==========================================================
+         2. O CHEF — história (só com informações conferidas)
+         ========================================================== -->
+    <section class="secao" id="chef">
+      <div class="wrap chef-grade">
+        <!-- Duas fotos do chef sobrepostas, como numa página de revista -->
+        <div class="chef-fotos">
+          <figure class="foto chef-foto">
+            <img src="fotos/chef-gustavo.jpg" alt="Chef Gustavo Oliveira, de dólmã do Vitório, brindando com vinho tinto diante de uma lasanha" width="1279" height="1600" loading="lazy">
+          </figure>
+          <figure class="foto chef-foto-2">
+            <img src="fotos/chef-gustavo-prato.jpg" alt="Chef Gustavo Oliveira na janela do Vitório, servindo um prato" width="1281" height="1520" loading="lazy">
+          </figure>
+        </div>
+        <div class="chef-texto">
+          <span class="rotulo">O chef</span>
+          <h2 class="chef-nome">Gustavo <em>Oliveira</em></h2>
+          <!-- Texto montado só com o que foi conferido em fontes públicas
+               (Instagram oficial, cardápio da casa e avaliações de clientes).
+               PARA COMPLETAR com o chef: onde aprendeu, desde quando está no Vitório,
+               como a casa começou. -->
+          <p>É ele quem assina a cozinha do Vitório, na Av. Dom Pedro II: culinária internacional construída sobre massas artesanais, peixes e carnes.</p>
+          <p>As massas saem da própria cozinha, os filés chegam à mesa acompanhados de risoto e a carta fecha com vinhos e sobremesas da casa. Do filé ao gorgonzola com risoto de alho-poró ao camarão à provençal com risoto de bisque, o cardápio é o retrato do jeito do chef cozinhar.</p>
+          <p>Nas avaliações de quem frequenta a casa, dois conselhos se repetem: provar os risotos e, se tiver a chance, conhecer o chef Gustavo.</p>
+          <ul class="chef-dados">
+            <li><strong>25 anos</strong><span>em Araraquara</span></li>
+            <li><strong>Massas à mão</strong><span>especialidade</span></li>
+            <li><strong>4,8 no Google</strong><span>mais de 1.200 avaliações</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================
+         3. PRATOS DA CASA — pratos vistos de cima, girando
+         ========================================================== -->
+    <section class="secao alt" id="pratos">
+      <div class="wrap">
+        <div class="pratos-topo">
+          <span class="rotulo">Da cozinha</span>
+          <h2 class="titulo">Pratos da <em>casa</em></h2>
+          <p>Quatro pratos do cardápio, do jeito que chegam à mesa.</p>
+        </div>
+        <ul class="pratos-lista">
+          <li class="prato-item">
+            <div class="prato" data-giro="1" data-velocidade="4"><img src="fotos/prato-file-gorgonzola.jpg" alt="Filé ao molho de gorgonzola com risoto de alho-poró e batata rústica, visto de cima" width="850" height="850" loading="lazy"></div>
+            <span class="prato-cat">Carnes</span>
+            <h3>Filé ao molho de gorgonzola</h3>
+            <p>Acompanha risoto de alho-poró e batata rústica.</p>
+            <span class="prato-preco">R$ 103</span>
+          </li>
+          <li class="prato-item">
+            <div class="prato" data-giro="-1" data-velocidade="3.5"><img src="fotos/prato-norma.jpg" alt="Spaghetti alla Norma com berinjela, alcaparras, burrata e manjericão, visto de cima" width="1090" height="1090" loading="lazy"></div>
+            <span class="prato-cat">Massas artesanais</span>
+            <h3>Spaghetti alla Norma</h3>
+            <p>Molho sugo, berinjela, alcaparra e burrata cremosa.</p>
+            <span class="prato-preco">R$ 80</span>
+          </li>
+          <li class="prato-item">
+            <div class="prato" data-giro="1" data-velocidade="4.5"><img src="fotos/prato-salmao.jpg" alt="Salmão em crosta de amêndoas com risoto de alho-poró, visto de cima" width="740" height="740" loading="lazy"></div>
+            <span class="prato-cat">Peixes</span>
+            <h3>Salmão em crosta de amêndoas</h3>
+            <p>Com molho de limão. Acompanha risoto de alho-poró.</p>
+            <span class="prato-preco">R$ 105</span>
+          </li>
+          <li class="prato-item">
+            <div class="prato" data-giro="-1" data-velocidade="4"><img src="fotos/prato-cheesecake.jpg" alt="Fatia de cheesecake de amora com calda e hortelã, vista de cima" width="1360" height="1360" loading="lazy"></div>
+            <span class="prato-cat">Sobremesas</span>
+            <h3>Cheesecake de amora</h3>
+            <p>Calda de amora e folhas de hortelã.</p>
+            <span class="prato-preco">R$ 33</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Faixa 2: trechos de avaliações reais do Google (copiados sem mudar as palavras;
+         "…" marca onde o texto original continua). Passa no sentido contrário da faixa 1. -->
+    <div class="faixa-notas faixa-depoimentos" aria-label="Avaliações de clientes no Google">
+      <div class="faixa-trilho">
+        <span><q>…pedi o prato de risoto de alho poró com salmão com crosta de amêndoas e foi espetacular.</q> <em>Gisele, no Google</em></span>
+        <span><q>Tudo impecável! O serviço é realmente 5 estrelas…</q> <em>Stefanny, no Google</em></span>
+        <span><q>Excelente restaurante, com boas opções de carnes, peixes e massas.</q> <em>Murilo, no Google</em></span>
+        <span><q>O atendimento é acolhedor e atencioso. Gosto da música ambiente e do clima.</q> <em>Gisele, no Google</em></span>
+        <span aria-hidden="true"><q>…pedi o prato de risoto de alho poró com salmão com crosta de amêndoas e foi espetacular.</q> <em>Gisele, no Google</em></span>
+        <span aria-hidden="true"><q>Tudo impecável! O serviço é realmente 5 estrelas…</q> <em>Stefanny, no Google</em></span>
+        <span aria-hidden="true"><q>Excelente restaurante, com boas opções de carnes, peixes e massas.</q> <em>Murilo, no Google</em></span>
+        <span aria-hidden="true"><q>O atendimento é acolhedor e atencioso. Gosto da música ambiente e do clima.</q> <em>Gisele, no Google</em></span>
+      </div>
+    </div>
+
+    <!-- ==========================================================
+         4. A CASA — texto do próprio restaurante + 4 fotos do lugar
+         ========================================================== -->
+    <section class="secao" id="casa">
+      <div class="wrap">
+        <div class="casa-topo">
+          <div>
+            <span class="rotulo">A casa · 25 anos</span>
+            <h2 class="casa-titulo">Uma história construída ao redor da <em>mesa</em>.</h2>
+          </div>
+          <div class="casa-texto">
+            <p>Há 25 anos, o Vitório ocupa um lugar especial na gastronomia de Araraquara. Uma trajetória feita de cozinha consistente, cuidado no servir e relações que amadureceram junto com a casa.</p>
+            <p>O tempo trouxe novas histórias, novos encontros e novos sabores, preservando a identidade que fez do Vitório parte da vida da cidade.</p>
+            <a href="https://wa.me/5516981937333?text=Ol%C3%A1!%20Gostaria%20de%20reservar%20uma%20mesa%20no%20Vit%C3%B3rio.%20Poderiam%20me%20informar%20a%20disponibilidade?" class="btn btn-contorno" target="_blank" rel="noopener">Reservar uma mesa</a>
+          </div>
+        </div>
+      </div>
+      <!-- Galeria grande: a tela "trava" e as fotos passam de lado
+           enquanto a pessoa rola a página para baixo, uma depois da outra. -->
+      <div class="casa-galeria">
+        <div class="casa-pin">
+          <div class="casa-trilho">
+            <figure class="foto"><img src="fotos/salao-principal.webp" alt="Salão principal do Vitório com teto de vigas de madeira, mesas postas e luz quente" width="1086" height="1448"></figure>
+            <figure class="foto"><img src="fotos/salao-adega.webp" alt="Mesas do Vitório com luminárias de cobre e a adega de vinhos ao fundo" width="1086" height="1448"></figure>
+            <figure class="foto"><img src="fotos/salao-mesas.webp" alt="Mesas de madeira postas com guardanapos e taças, e foto antiga de Araraquara na parede" width="1086" height="1448"></figure>
+            <figure class="foto"><img src="fotos/fachada.webp" alt="Fachada do Vitório com janelas de madeira e lampião aceso" width="1086" height="1448"></figure>
+          </div>
+          <span class="casa-contador" aria-hidden="true"><b>01</b> / 04</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================
+         5. CARDÁPIO COMPLETO — transcrito do cardápio impresso
+         ========================================================== -->
+    <section class="secao alt" id="cardapio">
+      <div class="wrap">
+        <span class="rotulo">Cardápio</span>
+        <div class="cardapio-topo">
+          <h2 class="titulo">O menu</h2>
+          <p>Preços em reais.</p>
+        </div>
+
+        <div class="abas" role="tablist" aria-label="Categorias do cardápio">
+          <button class="aba" role="tab" id="aba-entradas" aria-controls="p-entradas" aria-selected="true">Entradas</button>
+          <button class="aba" role="tab" id="aba-massas" aria-controls="p-massas" aria-selected="false" tabindex="-1">Massas</button>
+          <button class="aba" role="tab" id="aba-peixes" aria-controls="p-peixes" aria-selected="false" tabindex="-1">Peixes</button>
+          <button class="aba" role="tab" id="aba-carnes" aria-controls="p-carnes" aria-selected="false" tabindex="-1">Carnes</button>
+          <button class="aba" role="tab" id="aba-sobremesas" aria-controls="p-sobremesas" aria-selected="false" tabindex="-1">Sobremesas</button>
+          <button class="aba" role="tab" id="aba-bebidas" aria-controls="p-bebidas" aria-selected="false" tabindex="-1">Bebidas</button>
+          <button class="aba" role="tab" id="aba-kids" aria-controls="p-kids" aria-selected="false" tabindex="-1">Kids</button>
+          <span class="abas-indicador" aria-hidden="true"></span>
+        </div>
+
+        <!-- ENTRADAS -->
+        <div class="painel" role="tabpanel" id="p-entradas" aria-labelledby="aba-entradas">
+          <ul class="itens">
+            <li class="item"><div class="item-topo"><h3>Cesto de pães</h3><span class="preco">25</span></div></li>
+            <li class="item"><div class="item-topo"><h3>Couvert</h3><span class="preco">40</span></div><p>Acompanha cesto de pães.</p></li>
+            <li class="item"><div class="item-topo"><h3>Bruschetta tradicional</h3><span class="preco">75</span></div><p>Tomate concassé, manjericão e parmesão.</p></li>
+            <li class="item"><div class="item-topo"><h3>Bruschetta com mussarela de búfala e linguiça de javali</h3><span class="preco">80</span></div></li>
+            <li class="item"><div class="item-topo"><h3>Burrata com berinjela agridoce e tomate concassé</h3><span class="preco">80</span></div><p>Acompanha pão italiano.</p></li>
+            <li class="item"><div class="item-topo"><h3>Arancini de funghi recheado com queijo <small>8 unidades</small></h3><span class="preco">55</span></div></li>
+            <li class="item"><div class="item-topo"><h3>Mini bolinho de bacalhau <small>12 unidades</small></h3><span class="preco">65</span></div></li>
+            <li class="item"><div class="item-topo"><h3>Steak tartare</h3><span class="preco">95</span></div><p>Acompanha batata rústica ou salada de rúcula.</p></li>
+            <li class="item"><div class="item-topo"><h3>Carpaccio</h3><span class="preco">65</span></div></li>
+            <li class="item"><div class="item-topo"><h3>Tábua de frios e queijos</h3><span class="preco">90</span></div></li>
+            <li class="item"><div class="item-topo"><h3>Salada de bacalhau</h3><span class="preco">75</span></div><p>Folhas verdes, lascas de bacalhau, grão-de-bico e azeitona preta.</p></li>
+            <li class="item"><div class="item-topo"><h3>Salada de pera</h3><span class="preco">60</span></div><p>Folhas verdes, pera, gorgonzola e castanha-do-pará.</p></li>
+            <li class="item"><div class="item-topo"><h3>Salada Caesar</h3><span class="preco">60</span></div><p>Frango crocante, molho caesar, croutons e parmesão.</p></li>
+          </ul>
+        </div>
+
+        <!-- MASSAS -->
+        <div class="painel" role="tabpanel" id="p-massas" aria-labelledby="aba-massas" hidden>
+          <ul class="itens">
+            <li class="item"><div class="item-topo"><h3>Spaghetti alla Norma</h3><span class="preco">80</span></div><p>Molho sugo, berinjela, alcaparra e burrata cremosa.</p></li>
+            <li class="item"><div class="item-topo"><h3>Spaghetti bacalhau</h3><span class="preco">103</span></div><p>Tomate, azeitona preta e azeite.</p></li>
+            <li class="item"><div class="item-topo"><h3>Spaghetti frutos do mar</h3><span class="preco">103</span></div></li>
+            <li class="item"><div class="item-topo"><h3>Fettuccine camarão ao molho de limão levemente picante</h3><span class="preco">103</span></div></li>
+            <li class="item"><div class="item-topo"><h3>Fettuccine com ragu de cordeiro</h3><span class="preco">98</span></div></li>
+            <li class="item"><div class="item-topo"><h3>Fettuccine ao molho de limão e chips de Parma</h3><span class="preco">98</span></div></li>
+            <li class="item"><div class="item-topo"><h3>Penne à matriciana</h3><span class="preco">85</span></div><p>Molho sugo, guanciale, pimenta calabresa, parmesão e manjericão.</p></li>
+            <li class="item"><div class="item-topo"><h3>Lasanha tradicional</h3><span class="preco">90</span></div></li>
+            <li class="item"><div class="item-topo"><h3>Gnocchi recheado</h3><span class="preco">90</span></div><p>Grelhado, recheado com mussarela de búfala ao molho napolitano.</p></li>
+            <li class="item"><div class="item-topo"><h3>Gnocchi com lula e polvo</h3><span class="preco">103</span></div></li>
+            <li class="item"><div class="item-topo"><h3>Ravióli de mussarela de búfala</h3><span class="preco">90</span></div><p>Molho de tomate (servido no prato).</p></li>
+            <li class="item"><div class="item-topo"><h3>Sorrentino de costela</h3><span class="preco">95</span></div><p>Molho de tomate com fonduta de parmesão.</p></li>
+            <li class="item"><div class="item-topo"><h3>Rigatoni recheado com queijo ao molho funghi</h3><span class="preco">95</span></div></li>
+          </ul>
+        </div>
+
+        <!-- PEIXES -->
+        <div class="painel" role="tabpanel" id="p-peixes" aria-labelledby="aba-peixes" hidden>
+          <ul class="itens">
+            <li class="item"><div class="item-topo"><h3>Atum em crosta de gergelim e molho de limão</h3><span class="preco">115</span></div><p>Atum mal passado. Acompanha arroz negro.</p></li>
+            <li class="item"><div class="item-topo"><h3>Salmão em crosta de amêndoas e molho de limão</h3><span class="preco">105</span></div><p>Acompanha risoto de alho-poró.</p></li>
+            <li class="item"><div class="item-topo"><h3>Abadejo provençal</h3><span class="preco">125</span></div><p>Posta de abadejo grelhado no azeite e alho. Acompanha batatinha, mini cebola e tomatinho confitados e brócolis.</p></li>
+            <li class="item"><div class="item-topo"><h3>Abadejo recheado com camarão e cream cheese</h3><span class="preco">135</span></div><p>Acompanha risoto de bisque.</p></li>
+            <li class="item"><div class="item-topo"><h3>Abadejo mediterrâneo</h3><span class="preco">125</span></div><p>Acompanha risoto de castanha-do-pará com hortelã.</p></li>
+            <li class="item"><div class="item-topo"><h3>Bacalhau Vitório</h3><span class="preco">150</span></div><p>Lascas de bacalhau com alho-poró, grão-de-bico, cebola, azeite e batatas confitadas.</p></li>
+            <li class="item"><div class="item-topo"><h3>Bacalhau provençal</h3><span class="preco">175</span></div><p>Posta de bacalhau com azeite e alho. Acompanha batatinha, mini cebola e tomatinho confitados e brócolis.</p></li>
+            <li class="item"><div class="item-topo"><h3>Camarão à provençal</h3><span class="preco">160</span></div><p>Camarões grandes grelhados com azeite e alho. Acompanha risoto de bisque.</p></li>
+          </ul>
+        </div>
+
+        <!-- CARNES -->
+        <div class="painel" role="tabpanel" id="p-carnes" aria-labelledby="aba-carnes" hidden>
+          <ul class="itens">
+            <li class="item"><div class="item-topo"><h3>Filé ao molho de gorgonzola</h3><span class="preco">103</span></div><p>Acompanha risoto de alho-poró e batata rústica.</p></li>
+            <li class="item"><div class="item-topo"><h3>Filé com cogumelos frescos e amêndoas</h3><span class="preco">103</span></div><p>Acompanha gnocchi na manteiga de ervas.</p></li>
+            <li class="item"><div class="item-topo"><h3>Steak ao poivre vert</h3><span class="preco">120</span></div><p>Acompanha gnocchi recheado com mussarela de búfala na manteiga de ervas.</p></li>
+            <li class="item"><div class="item-topo"><h3>Tagliata de black angus <small>denver steak</small></h3><span class="preco">140</span></div><p>Acompanha gnocchi grelhado, rúcula e molho de mostarda.</p></li>
+            <li class="item"><div class="item-topo"><h3>Chorizo com azeite e alho</h3><span class="preco">130</span></div><p>Acompanha fettuccine com shitake, champignon e alho-poró.</p></li>
+            <li class="item"><div class="item-topo"><h3>Prime rib <small>black angus</small></h3><span class="preco">160</span></div><p>Acompanha risoto mulato.</p></li>
+            <li class="item"><div class="item-topo"><h3>Paleta de cordeiro cozida por 14 horas <small>serve 3 a 4 pessoas</small></h3><span class="preco">350</span></div><p>Acompanha batata, legumes confitados e cogumelos.</p></li>
+          </ul>
+        </div>
+
+        <!-- SOBREMESAS -->
+        <div class="painel" role="tabpanel" id="p-sobremesas" aria-labelledby="aba-sobremesas" hidden>
+          <ul class="itens">
+            <li class="item"><div class="item-topo"><h3>Torta de morango</h3><span class="preco">37</span></div></li>
+            <li class="item"><div class="item-topo"><h3>Cheesecake de amora</h3><span class="preco">33</span></div></li>
+            <li class="item"><div class="item-topo"><h3>Mil-folhas de morango</h3><span class="preco">37</span></div></li>
+            <li class="item"><div class="item-topo"><h3>Torta ganache de chocolate e nozes</h3><span class="preco">38</span></div></li>
+            <li class="item"><div class="item-topo"><h3>Fudge de chocolate com sorvete de creme</h3><span class="preco">39</span></div></li>
+            <li class="item"><div class="item-topo"><h3>Banana crocante com doce de leite e sorvete de creme</h3><span class="preco">33</span></div></li>
+            <li class="item"><div class="item-topo"><h3>Crème brûlée</h3><span class="preco">31</span></div></li>
+            <li class="item"><div class="item-topo"><h3>Sorvete Vitório</h3><span class="preco">42</span></div><p>Sorvete de creme, ganache de chocolate, farofa crocante e chantilly.</p></li>
+          </ul>
+        </div>
+
+        <!-- BEBIDAS — transcrito de fotos do cardápio de bebidas.
+             ATENÇÃO: a foto dos sucos/outras bebidas é de uma avaliação de ~7 anos atrás:
+             CONFIRMAR os preços com o restaurante antes de publicar. -->
+        <div class="painel" role="tabpanel" id="p-bebidas" aria-labelledby="aba-bebidas" hidden>
+          <h3 class="painel-titulo">Cervejas especiais</h3>
+          <ul class="itens">
+            <li class="item"><div class="item-topo"><h3>Colorado Cauim</h3><span class="preco">25</span></div></li>
+            <li class="item"><div class="item-topo"><h3>Colorado Appia</h3><span class="preco">25</span></div></li>
+            <li class="item"><div class="item-topo"><h3>Colorado Demoiselle</h3><span class="preco">25</span></div></li>
+            <li class="item"><div class="item-topo"><h3>Colorado Indica</h3><span class="preco">25</span></div></li>
+            <li class="item"><div class="item-topo"><h3>Opera IPA</h3><span class="preco">29</span></div></li>
+            <li class="item"><div class="item-topo"><h3>Opera Weissbier</h3><span class="preco">20</span></div></li>
+            <li class="item"><div class="item-topo"><h3>Theresópolis Gold</h3><span class="preco">20,50</span></div></li>
+            <li class="item"><div class="item-topo"><h3>Heineken <small>600 ml</small></h3><span class="preco">14,90</span></div></li>
+            <li class="item"><div class="item-topo"><h3>Heineken <small>long neck</small></h3><span class="preco">9,50</span></div></li>
+            <li class="item"><div class="item-topo"><h3>Corona <small>long neck</small></h3><span class="preco">10,20</span></div></li>
+          </ul>
+          <h3 class="painel-titulo">Outras cervejas, água e refrigerante</h3>
+          <ul class="itens">
+            <li class="item"><div class="item-topo"><h3>Serramalte <small>600 ml</small></h3><span class="preco">15</span></div></li>
+            <li class="item"><div class="item-topo"><h3>Long neck</h3><span class="preco">9</span></div></li>
+            <li class="item"><div class="item-topo"><h3>Malzbier <small>long neck</small></h3><span class="preco">9</span></div></li>
+            <li class="item"><div class="item-topo"><h3>Água mineral <small>500 ml</small></h3><span class="preco">8</span></div></li>
+            <li class="item"><div class="item-topo"><h3>Refrigerante</h3><span class="preco">8</span></div></li>
+          </ul>
+          <h3 class="painel-titulo">Sucos</h3>
+          <ul class="itens">
+            <li class="item"><div class="item-topo"><h3>Abacaxi</h3><span class="preco">9</span></div></li>
+            <li class="item"><div class="item-topo"><h3>Abacaxi com hortelã</h3><span class="preco">9</span></div></li>
+            <li class="item"><div class="item-topo"><h3>Acerola</h3><span class="preco">9</span></div></li>
+            <li class="item"><div class="item-topo"><h3>Laranja</h3><span class="preco">9</span></div></li>
+            <li class="item"><div class="item-topo"><h3>Laranja com acerola</h3><span class="preco">9</span></div></li>
+            <li class="item"><div class="item-topo"><h3>Limão</h3><span class="preco">9</span></div></li>
+            <li class="item"><div class="item-topo"><h3>Maracujá</h3><span class="preco">9</span></div></li>
+            <li class="item"><div class="item-topo"><h3>Morango</h3><span class="preco">9</span></div></li>
+            <li class="item"><div class="item-topo"><h3>Frutas vermelhas</h3><span class="preco">10</span></div></li>
+            <li class="item"><div class="item-topo"><h3>Mix</h3><span class="preco">10</span></div></li>
+            <li class="item"><div class="item-topo"><h3>Tomate</h3><span class="preco">12</span></div></li>
+            <li class="item"><div class="item-topo"><h3>Suco de uva orgânico Só <small>garrafa 300 ml</small></h3><span class="preco">17</span></div></li>
+          </ul>
+        </div>
+
+        <!-- KIDS -->
+        <div class="painel" role="tabpanel" id="p-kids" aria-labelledby="aba-kids" hidden>
+          <ul class="itens">
+            <li class="item"><div class="item-topo"><h3>Escalopinho com arroz e fritas</h3><span class="preco">65</span></div></li>
+            <li class="item"><div class="item-topo"><h3>Spaghettinho</h3><span class="preco">60</span></div><p>Molho branco, sugo ou bolonhesa.</p></li>
+            <li class="item"><div class="item-topo"><h3>Escalopinho grelhado</h3><span class="preco">40</span></div><p>Sem guarnição.</p></li>
+          </ul>
+          <p class="painel-nota">Exclusivo para crianças até 10 anos.</p>
+        </div>
+
+        <div class="cardapio-rodape">
+          <span>Pratos divididos têm acréscimo de 30%.</span>
+          <span>Pedidos para retirada ou entrega pelo <a class="link-risco" href="https://wa.me/5516981937333?text=Ol%C3%A1!%20Gostaria%20de%20fazer%20um%20pedido%20no%20Vit%C3%B3rio.%20Poderiam%20me%20enviar%20o%20card%C3%A1pio%20e%20as%20orienta%C3%A7%C3%B5es%20para%20retirada%20ou%20entrega?" target="_blank" rel="noopener">WhatsApp</a>.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================
+         6. FOTOS — 1 grande + 8 menores
+         ========================================================== -->
+    <section class="secao" id="fotos">
+      <div class="wrap">
+        <span class="rotulo">Fotos</span>
+        <h2 class="titulo">À <em>mesa</em></h2>
+        <div class="galeria">
+          <figure class="foto grande"><img src="fotos/steak-tartare.webp" alt="Chef temperando um steak tartare com sal" width="1439" height="1436" loading="lazy"></figure>
+          <figure class="foto"><img src="fotos/chorizo-fettuccine.jpg" alt="Chorizo grelhado com alho dourado e fettuccine com cogumelos" width="920" height="920" loading="lazy"></figure>
+          <figure class="foto"><img src="fotos/atum-gergelim.webp" alt="Atum em crosta de gergelim sobre arroz negro" width="1437" height="1435" loading="lazy"></figure>
+          <figure class="foto"><img src="fotos/spaghetti-bacalhau.jpg" alt="Spaghetti com lascas de bacalhau, tomate e azeitona preta" width="1060" height="1060" loading="lazy"></figure>
+          <figure class="foto"><img src="fotos/lasanha.webp" alt="Lasanha tradicional gratinada com flor comestível" width="1439" height="1436" loading="lazy"></figure>
+          <figure class="foto"><img src="fotos/gnocchi-lula-polvo.jpg" alt="Gnocchi com lula e polvo ao molho de tomate" width="840" height="840" loading="lazy"></figure>
+          <figure class="foto"><img src="fotos/torta-morango.webp" alt="Fatia de torta de morango com calda" width="1439" height="1436" loading="lazy"></figure>
+          <figure class="foto"><img src="fotos/carpaccio.webp" alt="Carpaccio com rúcula, alcaparras e parmesão" width="1439" height="1436" loading="lazy"></figure>
+          <figure class="foto"><img src="fotos/bolinho-bacalhau.webp" alt="Mini bolinhos de bacalhau com molho" width="1439" height="1436" loading="lazy"></figure>
+        </div>
+        <p class="galeria-nota">Mais no Instagram: <a class="link-risco" href="https://www.instagram.com/restaurantevitorio/" target="_blank" rel="noopener">@restaurantevitorio</a></p>
+      </div>
+    </section>
+
+    <!-- ==========================================================
+         7. HORÁRIOS E CONTATO
+         ========================================================== -->
+    <section class="secao alt" id="contato">
+      <div class="wrap">
+        <span class="rotulo">Onde estamos</span>
+        <h2 class="endereco-grande">Av. Dom Pedro II, 1432</h2>
+        <p class="endereco-bairro">Jardim do Carmo · Araraquara – SP · 14801-040</p>
+
+        <div class="contato-grade">
+          <div>
+            <h3 class="subtitulo">Horários</h3>
+            <table class="horarios">
+              <tbody>
+                <tr data-dia="0"><th scope="row">Domingo</th><td>12h – 15h</td></tr>
+                <tr data-dia="1"><th scope="row">Segunda</th><td class="fechado">Fechado</td></tr>
+                <tr data-dia="2"><th scope="row">Terça</th><td>18h45 – 22h15</td></tr>
+                <tr data-dia="3"><th scope="row">Quarta</th><td>18h45 – 22h15</td></tr>
+                <tr data-dia="4"><th scope="row">Quinta</th><td>18h45 – 22h15</td></tr>
+                <tr data-dia="5"><th scope="row">Sexta</th><td>18h45 – 22h15</td></tr>
+                <tr data-dia="6"><th scope="row">Sábado</th><td>12h – 14h15 · 18h45 – 22h15</td></tr>
+              </tbody>
+            </table>
+            <p class="nota-pequena">Em feriados o horário pode mudar.</p>
+          </div>
+          <div>
+            <h3 class="subtitulo">Reservas e contato</h3>
+            <dl class="contatos">
+              <div><dt>WhatsApp</dt><dd><a class="link-risco" href="https://wa.me/5516981937333" target="_blank" rel="noopener">(16) 98193-7333</a></dd></div>
+              <div><dt>Telefone</dt><dd><a class="link-risco" href="tel:+551633222739">(16) 3322-2739</a></dd></div>
+              <div><dt>Instagram</dt><dd><a class="link-risco" href="https://www.instagram.com/restaurantevitorio/" target="_blank" rel="noopener">@restaurantevitorio</a></dd></div>
+              <div><dt>Facebook</dt><dd><a class="link-risco" href="https://www.facebook.com/vitorioararaquara/" target="_blank" rel="noopener">/vitorioararaquara</a></dd></div>
+            </dl>
+            <div class="contato-acoes">
+              <a href="https://wa.me/5516981937333?text=Ol%C3%A1!%20Gostaria%20de%20reservar%20uma%20mesa%20no%20Vit%C3%B3rio.%20Poderiam%20me%20informar%20a%20disponibilidade?" class="btn btn-cheio" target="_blank" rel="noopener">Reservar pelo WhatsApp</a>
+              <a href="tel:+551633222739" class="btn btn-contorno">Ligar</a>
+              <a href="https://www.google.com/maps/search/?api=1&query=Restaurante+Vit%C3%B3rio+Av.+Dom+Pedro+II+1432+Araraquara" class="btn btn-contorno" target="_blank" rel="noopener">Como chegar</a>
+            </div>
+          </div>
+        </div>
+
+        <a class="mapa" href="https://www.google.com/maps/search/?api=1&query=Restaurante+Vit%C3%B3rio+Av.+Dom+Pedro+II+1432+Araraquara" target="_blank" rel="noopener" aria-label="Abrir o Restaurante Vitório no Google Maps">
+          <div class="mapa-tela" id="mapa-leaflet" aria-hidden="true"></div>
+          <span class="mapa-botao">Abrir no Google Maps <span aria-hidden="true">↗</span></span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============================================================
+       RODAPÉ
+       ============================================================ -->
+  <footer class="rodape">
+    <div class="wrap">
+      <div class="rodape-topo">
+        <img src="logo-vitorio.png" alt="Vitório" width="625" height="265" loading="lazy">
+        <nav class="rodape-links" aria-label="Rodapé">
+          <a href="#cardapio" class="link-risco">Cardápio</a>
+          <a href="#contato" class="link-risco">Horários</a>
+          <a href="https://linktr.ee/restaurante.vitorio" class="link-risco" target="_blank" rel="noopener">Linktree</a>
+          <a href="https://www.instagram.com/restaurantevitorio/" class="link-risco" target="_blank" rel="noopener">Instagram</a>
+        </nav>
+      </div>
+      <div class="rodape-base">
+        <span>© <span id="ano">2026</span> Restaurante Vitório · Araraquara/SP</span>
+        <span class="feito-por">Feito por <img src="logo-borus.png" alt="Börus" width="400" height="273" loading="lazy"></span>
+      </div>
+    </div>
+  </footer>
+
+  <div class="barra-celular">
+    <a href="https://wa.me/5516981937333?text=Ol%C3%A1!%20Gostaria%20de%20reservar%20uma%20mesa%20no%20Vit%C3%B3rio.%20Poderiam%20me%20informar%20a%20disponibilidade?" class="btn btn-cheio" target="_blank" rel="noopener">Reservar mesa</a>
+    <a href="tel:+551633222739" class="btn btn-contorno">Ligar</a>
+  </div>
+
+  <!-- ============================================================
+       9. JAVASCRIPT (Motion pelo CDN, versão fixa)
+       ============================================================ -->
+  <script type="module">
+    import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@14.12.0/+esm";
+    clearTimeout(window.planoB);
+
+    const semMovimento = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const easeOut = [0.22, 1, 0.36, 1];
+    document.getElementById("ano").textContent = new Date().getFullYear();
+
+    /* ---------- Menu sólido e barra do celular depois da capa ---------- */
+    const menu = document.querySelector(".menu");
+    const barra = document.querySelector(".barra-celular");
+    const capa = document.querySelector(".capa");
+    new IntersectionObserver(([e]) => {
+      barra.classList.toggle("visivel", !e.isIntersecting);
+    }, { rootMargin: "-64px 0px 0px 0px", threshold: 0.12 }).observe(capa);
+    // o menu fica escuro assim que a página começa a rolar (o conteúdo não passa "por baixo" do logo)
+    const menuSolido = () => menu.classList.toggle("solido", scrollY > 12 || painel.classList.contains("aberto"));
+    addEventListener("scroll", menuSolido, { passive: true });
+
+    /* ---------- Horários: marca o dia de hoje ---------- */
+    document.querySelector(`.horarios tr[data-dia="${new Date().getDay()}"]`)?.classList.add("hoje");
+
+    /* ---------- Menu do celular ---------- */
+    const botao = document.querySelector(".menu-botao");
+    const painel = document.getElementById("menu-painel");
+    function abrirMenu(abrir) {
+      painel.classList.toggle("aberto", abrir);
+      menu.classList.toggle("solido", abrir || scrollY > 12);
+      botao.setAttribute("aria-expanded", abrir);
+      botao.setAttribute("aria-label", abrir ? "Fechar menu" : "Abrir menu");
+      document.body.style.overflow = abrir ? "hidden" : "";
+      if (abrir && !semMovimento) animate(painel.querySelectorAll("a"), { opacity: [0, 1], y: [10, 0] }, { duration: 0.35, delay: stagger(0.035), ease: easeOut });
+    }
+    botao.addEventListener("click", () => abrirMenu(!painel.classList.contains("aberto")));
+    painel.querySelectorAll("a").forEach(a => a.addEventListener("click", () => abrirMenu(false)));
+    addEventListener("keydown", e => { if (e.key === "Escape") abrirMenu(false); });
+
+    /* ---------- Cardápio: abas ---------- */
+    const abas = [...document.querySelectorAll(".aba")];
+    const indicador = document.querySelector(".abas-indicador");
+    const abaAtiva = () => abas.find(a => a.getAttribute("aria-selected") === "true");
+    function medidas(aba) {
+      const cs = getComputedStyle(aba);
+      const pl = parseFloat(cs.paddingLeft), pr = parseFloat(cs.paddingRight);
+      return { x: aba.offsetLeft + pl, width: aba.offsetWidth - pl - pr };
+    }
+    function moverIndicador(aba, instantaneo) {
+      const d = medidas(aba);
+      if (instantaneo || semMovimento) { indicador.style.transform = `translateX(${d.x}px)`; indicador.style.width = d.width + "px"; }
+      else animate(indicador, d, { duration: 0.3, ease: easeOut });
+    }
+    function ativarAba(aba) {
+      abas.forEach(a => {
+        const ativa = a === aba;
+        a.setAttribute("aria-selected", ativa);
+        a.tabIndex = ativa ? 0 : -1;
+        document.getElementById(a.getAttribute("aria-controls")).hidden = !ativa;
+      });
+      moverIndicador(aba);
+      aba.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
+      if (!semMovimento) animate(document.getElementById(aba.getAttribute("aria-controls")), { opacity: [0, 1], y: [6, 0] }, { duration: 0.22, ease: easeOut });
+    }
+    abas.forEach((aba, i) => {
+      aba.addEventListener("click", () => ativarAba(aba));
+      aba.addEventListener("keydown", e => {
+        let alvo = null;
+        if (e.key === "ArrowRight") alvo = abas[(i + 1) % abas.length];
+        if (e.key === "ArrowLeft") alvo = abas[(i - 1 + abas.length) % abas.length];
+        if (e.key === "Home") alvo = abas[0];
+        if (e.key === "End") alvo = abas[abas.length - 1];
+        if (alvo) { e.preventDefault(); alvo.focus(); ativarAba(alvo); }
+      });
+    });
+    moverIndicador(abas[0], true);
+    document.fonts.ready.then(() => moverIndicador(abaAtiva(), true));
+    addEventListener("resize", () => moverIndicador(abaAtiva(), true));
+
+    /* ---------- Mapa (Leaflet + OpenStreetMap, só carrega perto da tela) ---------- */
+    const mapaEl = document.getElementById("mapa-leaflet");
+    new IntersectionObserver(async ([e], obs) => {
+      if (!e.isIntersecting) return;
+      obs.disconnect();
+      const L = await import("https://unpkg.com/leaflet@1.9.4/dist/leaflet-src.esm.js");
+      const ponto = [-21.7979938, -48.1846609];
+      const mapa = L.map(mapaEl, { center: ponto, zoom: 16, zoomControl: false, dragging: false, scrollWheelZoom: false, doubleClickZoom: false, touchZoom: false, boxZoom: false, keyboard: false });
+      mapa.attributionControl.setPrefix(false);
+      L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "© OpenStreetMap" }).addTo(mapa);
+      L.marker(ponto, { interactive: false, keyboard: false, icon: L.divIcon({ className: "pino", iconSize: [18, 18], iconAnchor: [9, 9], html: '<span class="pino-onda"></span><span class="pino-ponto"></span><span class="pino-nome">Vitório</span>' }) }).addTo(mapa);
+    }, { rootMargin: "400px" }).observe(mapaEl);
+
+    /* ---------- Endereço grande em palavras ---------- */
+    const endereco = document.querySelector(".endereco-grande");
+    endereco.innerHTML = endereco.textContent.trim().split(" ").map(p => `<span class="palavra">${p}</span>`).join(" ");
+
+    /* ---------- A CASA: fotos passando de lado ao rolar ---------- */
+    const galeria = document.querySelector(".casa-galeria");
+    const trilho = galeria.querySelector(".casa-trilho");
+    const contador = galeria.querySelector(".casa-contador b");
+    const totalFotos = trilho.children.length;
+    if (semMovimento) {
+      galeria.classList.add("livre");
+    } else {
+      let extra = 0, pedido = false;
+      function medirGaleria() {
+        extra = Math.max(0, trilho.scrollWidth - innerWidth);       // quanto o trilho precisa andar
+        galeria.style.height = (innerHeight + extra) + "px";        // rolagem extra = distância a andar
+        moverGaleria();
+      }
+      function moverGaleria() {
+        pedido = false;
+        const total = galeria.offsetHeight - innerHeight;
+        const p = total > 0 ? Math.min(1, Math.max(0, -galeria.getBoundingClientRect().top / total)) : 0;
+        trilho.style.transform = `translate3d(${-p * extra}px, 0, 0)`;
+        contador.textContent = String(Math.round(p * (totalFotos - 1)) + 1).padStart(2, "0");
+      }
+      addEventListener("scroll", () => { if (!pedido) { pedido = true; requestAnimationFrame(moverGaleria); } }, { passive: true });
+      addEventListener("resize", medirGaleria);
+      addEventListener("load", medirGaleria);
+      medirGaleria();
+    }
+
+    /* ---------- PRATOS GIRANDO ----------
+       Cada prato gira devagar sozinho (como num prato giratório de verdade).
+       Quando a pessoa rola a página, ele ganha um "empurrão" e gira mais rápido,
+       desacelerando aos poucos — o movimento acompanha a mão de quem rola.
+       Só os pratos que estão na tela são animados (economiza bateria). */
+    if (!semMovimento) {
+      const pratos = [...document.querySelectorAll("[data-giro]")].map(el => ({
+        el, img: el.querySelector("img"),
+        sentido: parseFloat(el.dataset.giro),           // 1 = horário, -1 = anti-horário
+        velocidade: parseFloat(el.dataset.velocidade),  // graus por segundo
+        angulo: Math.random() * 360, visivel: false
+      }));
+      const vistos = new IntersectionObserver(entradas => {
+        entradas.forEach(en => { const p = pratos.find(p => p.el === en.target); if (p) p.visivel = en.isIntersecting; });
+      });
+      pratos.forEach(p => vistos.observe(p.el));
+
+      let empurrao = 0, ultimoY = scrollY, ultimo = performance.now();
+      addEventListener("scroll", () => {
+        const dy = scrollY - ultimoY; ultimoY = scrollY;
+        empurrao = Math.max(-90, Math.min(90, empurrao + dy * 0.35));
+      }, { passive: true });
+
+      function girar(agora) {
+        const dt = Math.min((agora - ultimo) / 1000, 0.05); ultimo = agora;
+        empurrao *= Math.pow(0.04, dt);                  // o empurrão some em ~1 s
+        for (const p of pratos) {
+          if (!p.visivel) continue;
+          p.angulo += (p.velocidade + Math.abs(empurrao)) * p.sentido * dt;
+          p.img.style.transform = `rotate(${p.angulo}deg)`;
+        }
+        requestAnimationFrame(girar);
+      }
+      requestAnimationFrame(girar);
+    }
+
+    if (!semMovimento) {
+      /* ---------- Entrada da capa (uma vez) ----------
+         O prato "chega" girando e assentando na mesa; o logo é pintado;
+         as frases sobem por trás de uma janela; o resto aparece em seguida. */
+      const pratoCapa = document.querySelector(".capa-prato");
+      await Promise.race([pratoCapa.querySelector("img").decode().catch(() => {}), new Promise(r => setTimeout(r, 1200))]);
+      animate(pratoCapa, { opacity: [0, 1], scale: [0.86, 1], rotate: [-25, 0] }, { duration: 1.8, ease: easeOut });
+      animate(".capa-logo", { opacity: [0, 1], clipPath: ["inset(0 100% 0 0)", "inset(0 0% 0 0)"] }, { duration: 1.1, delay: 0.3, ease: [0.77, 0, 0.175, 1] });
+      animate(".capa-titulo .linha > span", { y: ["110%", "0%"] }, { duration: 0.9, delay: stagger(0.14, { startDelay: 0.9 }), ease: easeOut });
+      animate(".capa-texto .entra:not(.capa-logo)", { opacity: [0, 1], y: [12, 0] }, { duration: 0.6, delay: stagger(0.07, { startDelay: 1.4 }), ease: easeOut });
+
+      /* ---------- Momento: endereço acende palavra por palavra ---------- */
+      inView(endereco, () => {
+        animate(endereco.querySelectorAll(".palavra"), { color: ["#2c2c2c", "#f4f3f1"] }, { duration: 0.6, delay: stagger(0.12), ease: easeOut });
+      }, { amount: 0.6 });
+    }
+  </script>
+</body>
+</html>
